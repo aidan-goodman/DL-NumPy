@@ -1,0 +1,7 @@
+lib64
+pyvenv.cfg
+/bin/
+/lib/
+__pycache__/
+src/test/
+src/data/mnist.pkl
