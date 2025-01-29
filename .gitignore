@@ -1,7 +1,12 @@
-lib64
-pyvenv.cfg
+# workspace
 /bin/
+/include/
 /lib/
+/lib64/
+/share/
 __pycache__/
+pyvenv.cfg
+
+# code
 src/test/
 src/data/mnist.pkl

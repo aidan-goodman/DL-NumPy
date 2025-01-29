@@ -14,10 +14,13 @@ class TwoLayerNet:
         w1, w2 = self.params["W1"], self.params["W2"]
         b1, b2 = self.params["b1"], self.params["b2"]
 
+        sigmoid = sigmoid_layer()
+        softmax = softmax_layer()
+
         a1 = np.dot(x, w1) + b1
-        z1 = sigmoid(a1)
+        z1 = sigmoid.forward(a1)
         a2 = np.dot(z1, w2) + b2
-        y = softmax(a2)
+        y = softmax.forward(a2)
 
         return y
 
@@ -48,21 +51,24 @@ class TwoLayerNet:
         w1, w2 = self.params["W1"], self.params["W2"]
         b1, b2 = self.params["b1"], self.params["b2"]
 
+        sigmoid = sigmoid_layer()
+        softmax = softmax_layer()
+
         grads = {}
 
         batch_num = x.shape[0]
 
         a1 = np.dot(x, w1) + b1
-        z1 = sigmoid(a1)
+        z1 = sigmoid.forward(a1)
         a2 = np.dot(z1, w2) + b2
-        y = softmax(a2)
+        y = softmax.forward(a2)
 
         dy = (y - t) / batch_num
         grads["W2"] = np.dot(z1.T, dy)
         grads["b2"] = np.sum(dy, axis=0)
 
         da1 = np.dot(dy, w2.T)
-        dz1 = sigmoid_grad(a1) * da1
+        dz1 = sigmoid.backward(da1)
         grads["W1"] = np.dot(x.T, dz1)
         grads["b1"] = np.sum(dz1, axis=0)
 

@@ -33,7 +33,7 @@ if __name__ == "__main__":
         # 计算梯度
         grad = network.gradient(x_batch, t_batch)
 
-        # 更新参数
+        # 更新梯度
         for k in network.params.keys():
             network.params[k] -= learning_rate * grad[k]
 

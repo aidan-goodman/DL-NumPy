@@ -1,23 +1,44 @@
 import numpy as np
 
 
-def sigmoid(x):
-    return 1 / (1 + np.exp(-x))
+class sigmoid_layer:
+    def __init__(self):
+        self.out = None
+
+    def forward(self, x):
+        out = 1 / (1 + np.exp(-x))
+        self.out = out
+        return out
+
+    def backward(self, dout):
+        if self.out is None:
+            raise Exception("Please forward first")
+        dx = dout * (1.0 - self.out) * self.out
+        return dx
 
 
-def sigmoid_grad(x):
-    return (1.0 - sigmoid(x)) * sigmoid(x)
+class softmax_layer:
+    def __init__(self):
+        self.out = None
 
+    def forward(self, x):
+        if x.ndim == 2:
+            x = x.T
+            x = x - np.max(x, axis=0)
+            y = np.exp(x) / np.sum(np.exp(x), axis=0)
+            out = y.T
+        else:
+            x = x - np.max(x)
+            out = np.exp(x) / np.sum(np.exp(x))
 
-def softmax(x):
-    if x.ndim == 2:
-        x = x.T
-        x = x - np.max(x, axis=0)
-        y = np.exp(x) / np.sum(np.exp(x), axis=0)
-        return y.T
+        self.out = out
+        return out
 
-    x = x - np.max(x)
-    return np.exp(x) / np.sum(np.exp(x))
+    def backward(self, dout):
+        if self.out is None:
+            raise Exception("Please forward first")
+        dx = dout * (self.out - self.out.sum(axis=1, keepdims=True))
+        return dx
 
 
 def cross_entropy_error(y, t):
@@ -38,9 +59,11 @@ def _numerical_gradient_no_batch(f, x):
 
     for idx in range(x.size):
         tmp_val = x[idx]
+        # 计算正向步长的偏导数
         x[idx] = float(tmp_val) + h
         fxh1 = f(x)
 
+        # 计算反向步长的偏导数
         x[idx] = tmp_val - h
         fxh2 = f(x)
 
